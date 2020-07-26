@@ -30,6 +30,8 @@ export const NUMERIC_VALUES = {
   A: 14,
 };
 
+
+
 export interface Card {
   value: Value;
   suit: Suit;
@@ -100,10 +102,6 @@ export function extractRepetitions(
 
   const filtered = Array.from(res.values()).filter(filter);
   return filtered;
-}
-
-export function compareRepetitionByCount(a: Repetition, b: Repetition) {
-  return a.count - b.count;
 }
 
 export function compareRepetitionByValue(a: Repetition, b: Repetition) {

@@ -9,6 +9,11 @@ import {
   compareSameTypeCombinations,
 } from './poker-utils';
 
+export const UNKNOWN = -1;
+export const TIE = 0;
+export const FIRST_WINS = 1;
+export const SECOND_WINS = 2;
+
 /** *****************************/
 /* STRAIGHT                     */
 /** *****************************/
