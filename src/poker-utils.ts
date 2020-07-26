@@ -40,6 +40,11 @@ export interface Repetition {
   count: number;
 }
 
+export interface Advantage {
+  found: boolean;
+  result: number;
+}
+
 export function parseCards(hand: string[]): Card[] {
   const res: Card[] = [];
 
@@ -75,15 +80,12 @@ export function extractRepetitions(
   const res: Map<Value, Repetition> = new Map();
 
   for (const c of hand) {
-    // console.log(c)
     if (!res.has(c.value)) {
-      // console.log('found a ', c.value);
       res.set(c.value, {
         value: c.value,
         count: 1,
       });
     } else {
-      // console.log('found another', c.value);
       res.get(c.value).count++;
     }
   }
@@ -101,6 +103,36 @@ export function compareRepetitionByCount(a: Repetition, b: Repetition) {
 
 export function compareRepetitionByValue(a: Repetition, b: Repetition) {
   return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
+}
+
+export function findAdvantage(
+  r1: Repetition[],
+  r2: Repetition[],
+  expectedCount: number = 1,
+): Advantage {
+  if (r1.length < expectedCount && r2.length < expectedCount) {
+    return {
+      found: true,
+      result: 0,
+    };
+  }
+  if (r1.length === expectedCount && r2.length < expectedCount) {
+    return {
+      found: true,
+      result: 1,
+    };
+  }
+  if (r1.length < expectedCount && r2.length === expectedCount) {
+    return {
+      found: true,
+      result: 2,
+    };
+  }
+
+  return {
+    found: false,
+    result: -1,
+  };
 }
 
 function numericValue(c: Card) {

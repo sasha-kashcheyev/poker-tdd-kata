@@ -108,4 +108,14 @@ describe('pokerJudge', () => {
       expect(res).toEqual(1);
     });
   });
+
+  describe('Three of a kind', () => {
+    it('should beat two pairs', () => {
+      const res = pokerJudge(
+        ['AC', 'AD', 'KH', 'KS', 'QS'],
+        ['2C', '2D', '2H', '4C', '6D'],
+      );
+      expect(res).toEqual(2);
+    });
+  });
 });

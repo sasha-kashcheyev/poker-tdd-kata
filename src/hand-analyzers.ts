@@ -3,7 +3,22 @@ import {
   extractRepetitions,
   compareRepetitionByValue,
   NUMERIC_VALUES,
+  findAdvantage,
 } from './poker-utils';
+
+/** *****************************/
+/* THREE OF A KIND             */
+/** *****************************/
+
+export function threeOfKind(h1: Card[], h2: Card[]): number {
+  const r1 = extractRepetitions(h1, 3).sort(compareRepetitionByValue).reverse();
+  const r2 = extractRepetitions(h2, 3).sort(compareRepetitionByValue).reverse();
+
+  const adv = findAdvantage(r1, r2);
+  if (adv.found) {
+    return adv.result;
+  }
+}
 
 /** *****************************/
 /* TWO PAIRS                   */
@@ -13,14 +28,9 @@ export function twoPairs(h1: Card[], h2: Card[]): number {
   const r1 = extractRepetitions(h1, 2).sort(compareRepetitionByValue).reverse();
   const r2 = extractRepetitions(h2, 2).sort(compareRepetitionByValue).reverse();
 
-  if (r1.length < 2 && r2.length < 2) {
-    return 0;
-  }
-  if (r1.length === 2 && r2.length < 2) {
-    return 1;
-  }
-  if (r1.length < 2 && r2.length === 2) {
-    return 2;
+  const adv = findAdvantage(r1, r2, 2);
+  if (adv.found) {
+    return adv.result;
   }
 
   // at this point, both have 2 pairs, sorted from higher to lower
@@ -47,14 +57,9 @@ export function pair(h1: Card[], h2: Card[]): number {
   const r1 = extractRepetitions(h1, 2).sort(compareRepetitionByValue);
   const r2 = extractRepetitions(h2, 2).sort(compareRepetitionByValue);
 
-  if (r1.length === 0 && r2.length === 0) {
-    return 0;
-  }
-  if (r1.length > 0 && r2.length === 0) {
-    return 1;
-  }
-  if (r1.length === 0 && r2.length > 0) {
-    return 2;
+  const adv = findAdvantage(r1, r2);
+  if (adv.found) {
+    return adv.result;
   }
 
   // at this point, both hands have at least 1 pair.
