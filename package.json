@@ -31,13 +31,13 @@
     "*.{js,ts}": "yoshi lint"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.0",
+    "@types/node": "^8.0.0",
     "husky": "^4.2.1",
     "lint-staged": "^10.0.7",
-    "yoshi": "^4.0.0",
     "ts-jest": "^24.0.2",
     "typescript": "~3.9.0",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^8.0.0"
+    "yoshi": "^4.125.0"
   },
   "jest": {
     "transform": {
@@ -53,5 +53,8 @@
   },
   "eslintConfig": {
     "extends": "yoshi"
+  },
+  "dependencies": {
+    "g": "^2.0.1"
   }
 }
