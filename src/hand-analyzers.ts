@@ -6,6 +6,7 @@ import {
   findAdvantage,
   findHigherValueRepetition,
   findStraight,
+  findFlush,
   compareSameTypeCombinations,
   compareCardValue,
 } from './poker-utils';
@@ -15,6 +16,17 @@ export const UNKNOWN = -1;
 export const TIE = 0;
 export const FIRST_WINS = 1;
 export const SECOND_WINS = 2;
+
+/** ******************************/
+/* FLUSH                        */
+/** ******************************/
+
+export function flush(h1: Card[], h2: Card[]): number {
+  const c1 = findFlush(h1);
+  const c2 = findFlush(h2);
+
+  return compareSameTypeCombinations(c1, c2);
+}
 
 /** *****************************/
 /* STRAIGHT                     */

@@ -176,10 +176,24 @@ export function findStraight(hand: Card[]): CombinationSearchResult {
   });
 
   if (res.found) {
-    res.highestValue = hand[hand.length - 1].value;
+    res.highestValue = sorted[sorted.length - 1].value;
   }
 
   return res;
+}
+
+export function findFlush(hand: Card[]): CombinationSearchResult {
+  const suit = hand[0].suit;
+  if (hand.some((v) => v.suit !== suit)) {
+    return {
+      found: false,
+    };
+  }
+
+  return {
+    found: true,
+    highestValue: hand.sort().reverse()[0].value,
+  };
 }
 
 export function compareSameTypeCombinations(

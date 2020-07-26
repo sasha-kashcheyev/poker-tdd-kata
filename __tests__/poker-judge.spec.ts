@@ -143,5 +143,38 @@ describe('pokerJudge', () => {
       );
       expect(res).toEqual(2);
     });
+
+    it('should tie with straight with equal higher card', () => {
+      const res = pokerJudge(
+        ['3D', '4S', '5C', '6D', '7S'],
+        ['3C', '4D', '5H', '6S', '7C'],
+      );
+    });
+  });
+
+  describe('Flush', () => {
+    it('should beat straight', () => {
+      const res = pokerJudge(
+        ['3C', '4D', '5S', '6D', '7C'],
+        ['2S', '4S', '6S', '8S', 'AS'],
+      );
+      expect(res).toEqual(2);
+    });
+
+    it('should beat lower flush', () => {
+      const res = pokerJudge(
+        ['2D', '4D', '6D', '8D', 'JD'],
+        ['3C', '4C', '6C', '8C', '10C'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('should tie with flush with equal high card', () => {
+      const res = pokerJudge(
+        ['2D', '4D', '6D', '8D', 'JD'],
+        ['3C', '4C', '6C', '8C', 'JC'],
+      );
+      expect(res).toEqual(0);
+    });
   });
 });
