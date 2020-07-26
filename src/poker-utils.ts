@@ -1,7 +1,34 @@
-import { assert } from 'console';
-
 export type Suit = 'C' | 'D' | 'H' | 'S';
-export type Value = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 'J' | 'Q' | 'K' | 'A';
+export type Value =
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | '10'
+  | 'J'
+  | 'Q'
+  | 'K'
+  | 'A';
+
+export const NUMERIC_VALUES = {
+  2: 2,
+  3: 3,
+  4: 4,
+  5: 5,
+  6: 6,
+  7: 7,
+  8: 8,
+  9: 9,
+  10: 10,
+  J: 11,
+  Q: 12,
+  K: 13,
+  A: 14,
+};
 
 export interface Card {
   value: Value;
@@ -22,7 +49,7 @@ export function parseCards(hand: string[]): Card[] {
 
     const newCard: Card = {
       suit: suit as Suit,
-      value: value as Value,
+      value: ('' + value) as Value,
     };
 
     res.push(newCard);
@@ -38,45 +65,44 @@ export function compareCardValue(a: Card, b: Card): number {
     return 0;
   }
 
-  return numericValue(a) - numericValue(b);
+  return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
 }
 
-export function extractRepetitions(hand: Card[]): Repetition[] {
-  const res: Repetition[] = [];
+export function extractRepetitions(
+  hand: Card[],
+  count: number = 0,
+): Repetition[] {
+  const res: Map<Value, Repetition> = new Map();
 
   for (const c of hand) {
-    if (res[c.value] === undefined) {
-      res[c.value] = {
+    // console.log(c)
+    if (!res.has(c.value)) {
+      // console.log('found a ', c.value);
+      res.set(c.value, {
         value: c.value,
-        count: 0,
-      };
+        count: 1,
+      });
+    } else {
+      // console.log('found another', c.value);
+      res.get(c.value).count++;
     }
-    res[c.value].count++;
   }
 
-  // console.log(res);
-  return res.filter((r) => r.count > 1);
+  const filter: (r: Repetition) => Boolean =
+    count === 0 ? (r) => r.count > 1 : (r) => r.count === count;
+
+  const filtered = Array.from(res.values()).filter(filter);
+  return filtered;
 }
 
-export function compareRepetition(a: Repetition, b: Repetition) {
+export function compareRepetitionByCount(a: Repetition, b: Repetition) {
   return a.count - b.count;
 }
 
+export function compareRepetitionByValue(a: Repetition, b: Repetition) {
+  return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
+}
+
 function numericValue(c: Card) {
-  const table = {
-    2: 2,
-    3: 3,
-    4: 4,
-    5: 5,
-    6: 6,
-    7: 7,
-    8: 8,
-    9: 9,
-    10: 10,
-    J: 11,
-    Q: 12,
-    K: 13,
-    A: 14,
-  };
-  return table[c.value];
+  return NUMERIC_VALUES[c.value];
 }

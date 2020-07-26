@@ -46,5 +46,66 @@ describe('pokerJudge', () => {
       );
       expect(res).toEqual(1);
     });
+
+    it('if both have a pair, the hand with higher pair wins', () => {
+      const res = pokerJudge(
+        ['2C', '2D', '4S', '6H', '8C'],
+        ['2H', '3S', '3C', '5H', '6S'],
+      );
+
+      expect(res).toEqual(2);
+    });
+
+    it('if both have a pair of the same value, the one who has a higher card wins', () => {
+      const res = pokerJudge(
+        ['AC', 'AS', 'KC', 'JH', '9C'],
+        ['AD', 'AH', 'QC', 'JS', '9H'],
+      );
+
+      expect(res).toEqual(1);
+    });
+
+    it('also if the pair is lower than the high card', () => {
+      const res = pokerJudge(
+        ['10C', '10S', 'KC', 'JH', '8C'],
+        ['10D', '10H', 'QC', 'JS', '8H'],
+      );
+
+      expect(res).toEqual(1);
+    });
+  });
+
+  describe('Two pairs', () => {
+    it('Two pairs win over a hand with one pair', () => {
+      const res = pokerJudge(
+        ['2C', '2S', '3H', '3S', 'AC'],
+        ['2H', '3S', '5S', '10C', '10H'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('two pairs with higher higher pair win over two pairs with lower higher pair', () => {
+      const res = pokerJudge(
+        ['AH', '2H', '2D', '10C', '10H'],
+        ['2C', '2S', 'KH', 'KS', '5C'],
+      );
+      expect(res).toEqual(2);
+    });
+
+    it('if higher pairs are equal, look at the lower pairs', () => {
+      const res = pokerJudge(
+        ['3H', 'KC', 'KD', '10C', '10H'],
+        ['2C', '2S', 'KH', 'KS', '5C'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('if both higher and lower pairs are equal, look at the other card', () => {
+      const res = pokerJudge(
+        ['2C', '2D', '3C', '3D', 'AC'],
+        ['2E', '2H', '3E', 'KC', '3H'],
+      );
+      expect(res).toEqual(1);
+    });
   });
 });
