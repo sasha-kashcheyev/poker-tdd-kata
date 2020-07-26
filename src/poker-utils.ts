@@ -1,3 +1,11 @@
+import {
+  FIRST_WINS,
+  SECOND_WINS,
+  TIE,
+  UNKNOWN,
+  UNCERTAIN,
+} from './hand-analyzers';
+
 export type Suit = 'C' | 'D' | 'H' | 'S';
 export type Value =
   | '2'
@@ -29,8 +37,6 @@ export const NUMERIC_VALUES = {
   K: 13,
   A: 14,
 };
-
-
 
 export interface Card {
   value: Value;
@@ -112,30 +118,18 @@ export function findAdvantage(
   r1: Repetition[],
   r2: Repetition[],
   expectedCount: number = 1,
-): AdvantageSearchResult {
+): number {
   if (r1.length < expectedCount && r2.length < expectedCount) {
-    return {
-      found: true,
-      result: 0,
-    };
+    return UNKNOWN;
   }
   if (r1.length === expectedCount && r2.length < expectedCount) {
-    return {
-      found: true,
-      result: 1,
-    };
+    return FIRST_WINS;
   }
   if (r1.length < expectedCount && r2.length === expectedCount) {
-    return {
-      found: true,
-      result: 2,
-    };
+    return SECOND_WINS;
   }
 
-  return {
-    found: false,
-    result: -1,
-  };
+  return UNCERTAIN;
 }
 
 export function findHigherValueRepetition(
@@ -157,14 +151,14 @@ export function findHigherValueRepetition(
     const nv2 = NUMERIC_VALUES[sort2[i].value];
 
     if (nv1 > nv2) {
-      return 1;
+      return FIRST_WINS;
     }
     if (nv2 > nv1) {
-      return 2;
+      return SECOND_WINS;
     }
   }
 
-  return 0;
+  return TIE;
 }
 
 export function findStraight(hand: Card[]): CombinationSearchResult {

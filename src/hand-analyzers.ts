@@ -9,6 +9,7 @@ import {
   compareSameTypeCombinations,
 } from './poker-utils';
 
+export const UNCERTAIN = -2;
 export const UNKNOWN = -1;
 export const TIE = 0;
 export const FIRST_WINS = 1;
@@ -34,11 +35,12 @@ export function threeOfKind(h1: Card[], h2: Card[]): number {
   const r2 = extractRepetitions(h2, 3);
 
   const adv = findAdvantage(r1, r2);
-  if (adv.found) {
-    return adv.result;
+
+  if (adv === UNCERTAIN) {
+    return findHigherValueRepetition(r1, r2);
   }
 
-  return findHigherValueRepetition(r1, r2);
+  return adv;
 }
 
 /** *****************************/
@@ -50,12 +52,12 @@ export function twoPairs(h1: Card[], h2: Card[]): number {
   const r2 = extractRepetitions(h2, 2);
 
   const adv = findAdvantage(r1, r2, 2);
-  if (adv.found) {
-    return adv.result;
+
+  if (adv === UNCERTAIN) {
+    return findHigherValueRepetition(r1, r2);
   }
 
-  // at this point, both have 2 pairs, sorted from higher to lower
-  return findHigherValueRepetition(r1, r2);
+  return adv;
 }
 
 /** ****************/
@@ -67,13 +69,12 @@ export function pair(h1: Card[], h2: Card[]): number {
   const r2 = extractRepetitions(h2, 2);
 
   const adv = findAdvantage(r1, r2);
-  if (adv.found) {
-    return adv.result;
+
+  if (adv === UNCERTAIN) {
+    return findHigherValueRepetition(r1, r2);
   }
 
-  // at this point, both hands have at least 1 pair.
-  // The biggest of them will be at the end.
-  return findHigherValueRepetition(r1, r2);
+  return adv;
 }
 
 /** ****************/
