@@ -188,13 +188,27 @@ export function compareSameTypeCombinations(
 ) {
   if (!c1.found && !c2.found) {
     return UNKNOWN;
-  }
-  if (c1.found && !c2.found) {
+  } else if (c1.found && !c2.found) {
     return FIRST_WINS;
-  }
-  if (!c1.found && c2.found) {
+  } else if (!c1.found && c2.found) {
     return SECOND_WINS;
   }
 
   // at this point, both players have straight on hand
+  // so, judging by the higher card
+
+  if (!c1.highestValue || !c2.highestValue) {
+    throw new Error('Highest card is not set.');
+  }
+
+  const nv1 = NUMERIC_VALUES[c1.highestValue];
+  const nv2 = NUMERIC_VALUES[c2.highestValue];
+
+  if (nv1 > nv2) {
+    return FIRST_WINS;
+  } else if (nv1 < nv2) {
+    return SECOND_WINS;
+  } else {
+    return TIE;
+  }
 }
