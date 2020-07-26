@@ -16,7 +16,7 @@ describe('pokerJudge', () => {
     it('the hand with higher highest card wins', () => {
       const res = pokerJudge(
         ['AC', 'KD', 'QH', '10S', '9C'],
-        ['JH', 'KS', 'QC', '10D', '9H'],
+        ['JH', 'KS', 'QC', '10D', '8H'],
       );
       expect(res).toEqual(1);
     });
@@ -124,6 +124,24 @@ describe('pokerJudge', () => {
         ['KS', 'KD', 'KH', 'QC', 'AH'],
       );
       expect(res).toEqual(1);
+    });
+  });
+
+  describe('Straight', () => {
+    it('should beat three of a kind', () => {
+      const res = pokerJudge(
+        ['2C', '3D', '4H', '5S', '6C'],
+        ['AC', 'AD', 'AS', 'QS', '10S'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('should beat lower straight', () => {
+      const res = pokerJudge(
+        ['2C', '3D', '4H', '5S', '6C'],
+        ['3C', '4D', '5H', '6S', '7C'],
+      );
+      expect(res).toEqual(2);
     });
   });
 });

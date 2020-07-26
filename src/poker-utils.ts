@@ -40,9 +40,14 @@ export interface Repetition {
   count: number;
 }
 
-export interface Advantage {
+export interface AdvantageSearchResult {
   found: boolean;
   result: number;
+}
+
+export interface CombinationSearchResult {
+  found: boolean;
+  highestValue?: Value;
 }
 
 export function parseCards(hand: string[]): Card[] {
@@ -109,7 +114,7 @@ export function findAdvantage(
   r1: Repetition[],
   r2: Repetition[],
   expectedCount: number = 1,
-): Advantage {
+): AdvantageSearchResult {
   if (r1.length < expectedCount && r2.length < expectedCount) {
     return {
       found: true,
@@ -135,7 +140,10 @@ export function findAdvantage(
   };
 }
 
-export function findHigherCard(r1: Repetition[], r2: Repetition[]): number {
+export function findHigherValueRepetition(
+  r1: Repetition[],
+  r2: Repetition[],
+): number {
   if (!r1 || !r2 || !r1.length || !r2.length) {
     throw new Error('No repetitions');
   }
@@ -159,4 +167,43 @@ export function findHigherCard(r1: Repetition[], r2: Repetition[]): number {
   }
 
   return 0;
+}
+
+export function findStraight(hand: Card[]): CombinationSearchResult {
+  const res: CombinationSearchResult = {
+    found: true,
+  };
+  const sorted = hand.sort(compareCardValue);
+
+  sorted.forEach((c, i, arr) => {
+    if (i > 0) {
+      const prevNv = NUMERIC_VALUES[arr[i - 1].value];
+      const thisNv = NUMERIC_VALUES[c.value];
+      res.found = res.found && thisNv === prevNv + 1;
+    }
+  });
+
+  if (res.found) {
+    res.highestValue = hand[hand.length - 1].value;
+  }
+
+  return res;
+}
+
+export function compareSameTypeCombinations(
+  c1: CombinationSearchResult,
+  c2: CombinationSearchResult,
+) {
+  if (!c1.found && !c2.found) {
+    return 0;
+  }
+  if (c1.found && !c2.found) {
+    return 1;
+  }
+  if (!c1.found && c2.found) {
+    return 2;
+  }
+
+  // highest card is checked automagically in "High card" function
+  // because in a straight there won't be cards with same value
 }
