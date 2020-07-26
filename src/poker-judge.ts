@@ -17,7 +17,7 @@ export function pokerJudge(hand1: string[], hand2: string[]): number {
   let res = UNKNOWN;
 
   for (const analyzer of analyzers) {
-    if (res === UNKNOWN || res === TIE) {
+    if (res === UNKNOWN) {
       res = analyzer(h1, h2);
     }
   }

@@ -158,7 +158,7 @@ export function findHigherValueRepetition(
     }
   }
 
-  return TIE;
+  return UNKNOWN;
 }
 
 export function findStraight(hand: Card[]): CombinationSearchResult {
@@ -187,15 +187,14 @@ export function compareSameTypeCombinations(
   c2: CombinationSearchResult,
 ) {
   if (!c1.found && !c2.found) {
-    return 0;
+    return UNKNOWN;
   }
   if (c1.found && !c2.found) {
-    return 1;
+    return FIRST_WINS;
   }
   if (!c1.found && c2.found) {
-    return 2;
+    return SECOND_WINS;
   }
 
-  // highest card is checked automagically in "High card" function
-  // because in a straight there won't be cards with same value
+  // at this point, both players have straight on hand
 }

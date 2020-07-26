@@ -7,6 +7,7 @@ import {
   findHigherValueRepetition,
   findStraight,
   compareSameTypeCombinations,
+  compareCardValue,
 } from './poker-utils';
 
 export const UNCERTAIN = -2;
@@ -82,13 +83,22 @@ export function pair(h1: Card[], h2: Card[]): number {
 /** ****************/
 
 export function highCard(h1: Card[], h2: Card[]): number {
-  const r1 = extractRepetitions(h1, 1);
-  const r2 = extractRepetitions(h2, 1);
+  const s1 = h1.sort(compareCardValue).reverse();
+  const s2 = h2.sort(compareCardValue).reverse();
 
-  // if we are at this function, there MUST BE same amount of lonely cards at both hands
-  if (r1.length !== r2.length) {
+  if (s1.length !== s2.length) {
     throw new Error('Something went wrong in the analyzers above');
   }
 
-  return findHigherValueRepetition(r1, r2);
+  for (let i = 0; i < s1.length; i++) {
+    const compared = compareCardValue(s1[i], s2[i]);
+    if (compared > 0) {
+      return FIRST_WINS;
+    }
+    if (compared < 0) {
+      return SECOND_WINS;
+    }
+  }
+
+  return TIE;
 }
