@@ -1,0 +1,57 @@
+{
+  "name": "@wix/poker-tdd-kata",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "author": {
+    "name": "Alexander Kashcheyev",
+    "email": "alexanderk@wix.com"
+  },
+  "main": "dist/src/index.js",
+  "module": "dist/es/src/index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "http://npm.dev.wixpress.com/",
+    "versionBumpStrategy": "minor"
+  },
+  "scripts": {
+    "start": "yoshi start",
+    "build": "yoshi build",
+    "test": "yoshi test",
+    "lint": "yoshi lint",
+    "posttest": "npm run lint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": "yoshi lint"
+  },
+  "devDependencies": {
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.7",
+    "yoshi": "^4.0.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "~3.9.0",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^8.0.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist/",
+      "<rootDir>/node_modules/"
+    ]
+  },
+  "yoshi": {
+    "hmr": "auto"
+  },
+  "eslintConfig": {
+    "extends": "yoshi"
+  }
+}
