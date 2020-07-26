@@ -117,5 +117,13 @@ describe('pokerJudge', () => {
       );
       expect(res).toEqual(2);
     });
+
+    it('should beat three of a kind with lower value', () => {
+      const res = pokerJudge(
+        ['AC', 'AD', 'AS', 'QS', '10S'],
+        ['KS', 'KD', 'KH', 'QC', 'AH'],
+      );
+      expect(res).toEqual(1);
+    });
   });
 });

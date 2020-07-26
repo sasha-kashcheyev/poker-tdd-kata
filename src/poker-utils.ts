@@ -135,6 +135,28 @@ export function findAdvantage(
   };
 }
 
-function numericValue(c: Card) {
-  return NUMERIC_VALUES[c.value];
+export function findHigherCard(r1: Repetition[], r2: Repetition[]): number {
+  if (!r1 || !r2 || !r1.length || !r2.length) {
+    throw new Error('No repetitions');
+  }
+  if (r1.length !== r2.length) {
+    throw new Error('Different amount of repetitions');
+  }
+
+  const sort1 = r1.sort(compareRepetitionByValue).reverse();
+  const sort2 = r2.sort(compareRepetitionByValue).reverse();
+
+  for (let i = 0; i < sort1.length; i++) {
+    const nv1 = NUMERIC_VALUES[sort1[i].value];
+    const nv2 = NUMERIC_VALUES[sort2[i].value];
+
+    if (nv1 > nv2) {
+      return 1;
+    }
+    if (nv2 > nv1) {
+      return 2;
+    }
+  }
+
+  return 0;
 }
