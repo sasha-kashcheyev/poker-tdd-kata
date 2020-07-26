@@ -17,6 +17,25 @@ export const TIE = 0;
 export const FIRST_WINS = 1;
 export const SECOND_WINS = 2;
 
+/**********************************/
+/* FULL HOUSE                     */
+/**********************************/
+
+export function fullHouse(h1: Card[], h2: Card[]) : number {
+  const r1by3 = extractRepetitions(h1, 3);
+  const r2by3 = extractRepetitions(h2, 3);
+  const r1by2 = extractRepetitions(h1, 2);
+  const r2by2 = extractRepetitions(h2, 2);
+
+  if (
+    !r1by3.length || !r2by3.length || !r1by2.length || !r2by2.length
+  ) {
+    return UNKNOWN;
+  }
+
+  return findHigherValueRepetition(r1by3, r2by3);
+}
+
 /** ******************************/
 /* FLUSH                        */
 /** ******************************/
