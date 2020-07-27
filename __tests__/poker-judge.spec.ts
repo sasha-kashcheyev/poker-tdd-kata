@@ -182,16 +182,16 @@ describe('pokerJudge', () => {
     it('should beat flush', () => {
       const res = pokerJudge(
         ['2S', '4S', '6S', '8S', 'AS'],
-        ['2D','2C','2H','3C','3D']
+        ['2D', '2C', '2H', '3C', '3D'],
       );
       expect(res).toEqual(1);
     });
     it('should beat full house with lower three cards', () => {
       const res = pokerJudge(
-        ['2D','2C','2H','6C','6D'],
-        ['4D','4C','4H','3S','3C']
+        ['2D', '2C', '2H', '6C', '6D'],
+        ['4D', '4C', '4H', '3S', '3C'],
       );
       expect(res).toEqual(2);
     });
-  })
+  });
 });

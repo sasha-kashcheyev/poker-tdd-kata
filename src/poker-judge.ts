@@ -24,14 +24,6 @@ export function pokerJudge(hand1: string[], hand2: string[]): number {
   }
 
   return res;
-
-  return (
-    straight(h1, h2) ||
-    threeOfKind(h1, h2) ||
-    twoPairs(h1, h2) ||
-    pair(h1, h2) ||
-    highCard(h1, h2)
-  );
 }
 
 export default pokerJudge;
