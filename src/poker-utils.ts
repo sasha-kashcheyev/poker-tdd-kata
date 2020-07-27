@@ -48,11 +48,6 @@ export interface Repetition {
   count: number;
 }
 
-export interface AdvantageSearchResult {
-  found: boolean;
-  result: number;
-}
-
 export interface CombinationSearchResult {
   found: boolean;
   highestValue?: Value;
@@ -177,6 +172,7 @@ export function findStraight(hand: Card[]): CombinationSearchResult {
 
   if (res.found) {
     res.highestValue = sorted[sorted.length - 1].value;
+    console.log('highest value', res.highestValue);
   }
 
   return res;
@@ -192,7 +188,7 @@ export function findFlush(hand: Card[]): CombinationSearchResult {
 
   return {
     found: true,
-    highestValue: hand.sort().reverse()[0].value,
+    highestValue: hand.sort(compareCardValue).reverse()[0].value,
   };
 }
 
@@ -200,6 +196,7 @@ export function compareSameTypeCombinations(
   c1: CombinationSearchResult,
   c2: CombinationSearchResult,
 ) {
+  console.log(c1, c2);
   if (!c1.found && !c2.found) {
     return UNKNOWN;
   } else if (c1.found && !c2.found) {

@@ -212,4 +212,14 @@ describe('pokerJudge', () => {
       expect(res).toEqual(2);
     });
   });
+
+  describe('Straight flush', () => {
+    it('should beat 4 of a kind', () => {
+      const res = pokerJudge(
+        ['AD', '3S', 'AS', 'AC', 'AH'],
+        ['2C', '3C', '4C', '5C', '6C'],
+      );
+      expect(res).toEqual(2);
+    });
+  });
 });
