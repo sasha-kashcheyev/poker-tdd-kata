@@ -5,7 +5,7 @@ import pokerJudge from '../src/poker-judge';
 
 describe('pokerJudge', () => {
   describe('High Card', () => {
-    it('should return tie if all cards have the same value', () => {
+    it('should tie if all cards have the same value', () => {
       const res = pokerJudge(
         ['4C', '2D', '5H', 'JS', 'QC'],
         ['4D', '2H', '5S', 'JC', 'QD'],
@@ -13,7 +13,7 @@ describe('pokerJudge', () => {
       expect(res).toEqual(0);
     });
 
-    it('the hand with higher highest card wins', () => {
+    it('should beat a lower high card', () => {
       const res = pokerJudge(
         ['AC', 'KD', 'QH', '10S', '9C'],
         ['JH', 'KS', 'QC', '10D', '8H'],
@@ -21,15 +21,15 @@ describe('pokerJudge', () => {
       expect(res).toEqual(1);
     });
 
-    it('if the highest cards values are equal, go further to lower cards', () => {
+    it('should go to lower cards if higher cards have equal values', () => {
       const res = pokerJudge(
-        ['AC', 'KD', 'JH', '10S', '9C'],
-        ['AH', 'QS', 'JC', '10D', '9H'],
+        ['AC', 'JH', '10S', 'KD', '9C'],
+        ['AH', 'JC', '10D', 'QS', '9H'],
       );
       expect(res).toEqual(1);
     });
 
-    it('if all cards values except one are equal, use that card', () => {
+    it('should use the lowest card if all higher cards have equal values', () => {
       const res = pokerJudge(
         ['AC', 'QD', '10H', '8S', '6C'],
         ['AD', 'QH', '10S', '8C', '7D'],
@@ -39,7 +39,7 @@ describe('pokerJudge', () => {
   });
 
   describe('Pair', () => {
-    it('hand with pair beats hand without a pair', () => {
+    it('should beat hand without a pair', () => {
       const res = pokerJudge(
         ['2C', '2D', '3S', '5H', '7C'],
         ['2H', '4C', '6D', 'KC', 'AH'],
@@ -47,7 +47,7 @@ describe('pokerJudge', () => {
       expect(res).toEqual(1);
     });
 
-    it('if both have a pair, the hand with higher pair wins', () => {
+    it('should beat hand with lower pair', () => {
       const res = pokerJudge(
         ['2C', '2D', '4S', '6H', '8C'],
         ['2H', '3S', '3C', '5H', '6S'],
@@ -56,7 +56,7 @@ describe('pokerJudge', () => {
       expect(res).toEqual(2);
     });
 
-    it('if both have a pair of the same value, the one who has a higher card wins', () => {
+    it('should compare high cards if the pairs have equal value', () => {
       const res = pokerJudge(
         ['AC', 'AS', 'KC', 'JH', '9C'],
         ['AD', 'AH', 'QC', 'JS', '9H'],
@@ -65,7 +65,7 @@ describe('pokerJudge', () => {
       expect(res).toEqual(1);
     });
 
-    it('also if the pair is lower than the high card', () => {
+    it('...even if the pair is lower than the high card', () => {
       const res = pokerJudge(
         ['10C', '10S', 'KC', 'JH', '8C'],
         ['10D', '10H', 'QC', 'JS', '8H'],
@@ -73,10 +73,28 @@ describe('pokerJudge', () => {
 
       expect(res).toEqual(1);
     });
+
+    it('should proceed to lower cards if all cards except one are equal', () => {
+      const res = pokerJudge(
+        ['10C', '10S', 'KC', 'JH', '7C'],
+        ['10D', '10H', 'KS', 'JS', '8H'],
+      );
+
+      expect(res).toEqual(2);
+    });
+
+    it('should tie only if all cards in both hands have same values', () => {
+      const res = pokerJudge(
+        ['10C', '10S', 'KC', 'JH', '7C'],
+        ['10D', '10H', 'KS', 'JS', '7H'],
+      );
+
+      expect(res).toEqual(0);
+    });
   });
 
   describe('Two pairs', () => {
-    it('Two pairs win over a hand with one pair', () => {
+    it('should beat a hand with one pair', () => {
       const res = pokerJudge(
         ['2C', '2S', '3H', '3S', 'AC'],
         ['2H', '3S', '5S', '10C', '10H'],
@@ -84,7 +102,7 @@ describe('pokerJudge', () => {
       expect(res).toEqual(1);
     });
 
-    it('two pairs with higher higher pair win over two pairs with lower higher pair', () => {
+    it('should beat two pairs with lower higher pair', () => {
       const res = pokerJudge(
         ['AH', '2H', '2D', '10C', '10H'],
         ['2C', '2S', 'KH', 'KS', '5C'],
@@ -106,6 +124,14 @@ describe('pokerJudge', () => {
         ['2E', '2H', '3E', 'KC', '3H'],
       );
       expect(res).toEqual(1);
+    });
+
+    it('should tie only if higher pairs, lower pairs and the remaining cards have equal value', () => {
+      const res = pokerJudge(
+        ['2C', '2D', '3C', '3D', 'AC'],
+        ['2E', '2H', '3E', 'AS', '3H'],
+      );
+      expect(res).toEqual(0);
     });
   });
 
