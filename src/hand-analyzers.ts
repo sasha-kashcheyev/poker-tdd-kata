@@ -18,14 +18,30 @@ export const FIRST_WINS = 1;
 export const SECOND_WINS = 2;
 
 /** ********************************/
+/* FOUR OF A KIND                  */
+/** ********************************/
+export function fourOfKind(h1: Card[], h2: Card[]): number {
+  const r1 = extractRepetitions(h1, 4);
+  const r2 = extractRepetitions(h2, 4);
+
+  const adv = findAdvantage(r1, r2);
+
+  if (adv === UNCERTAIN) {
+    return findHigherValueRepetition(r1, r2);
+  }
+
+  return adv;
+}
+
+/** ********************************/
 /* FULL HOUSE                     */
 /** ********************************/
 
 export function fullHouse(h1: Card[], h2: Card[]): number {
-  const r1by3 = extractRepetitions(h1, 3);
-  const r2by3 = extractRepetitions(h2, 3);
-  const r1by2 = extractRepetitions(h1, 2);
-  const r2by2 = extractRepetitions(h2, 2);
+  const r1by3 = extractRepetitions(h1, 3); // 3 repeating cards from first hand
+  const r2by3 = extractRepetitions(h2, 3); // 3 repeating cards from second hand
+  const r1by2 = extractRepetitions(h1, 2); // 2 repeating cards from first hand
+  const r2by2 = extractRepetitions(h2, 2); // 2 repeating cards from second hand
 
   if (!r1by3.length || !r2by3.length || !r1by2.length || !r2by2.length) {
     return UNKNOWN;

@@ -194,4 +194,22 @@ describe('pokerJudge', () => {
       expect(res).toEqual(2);
     });
   });
+
+  describe('4 of a kind', () => {
+    it('should beat full house', () => {
+      const res = pokerJudge(
+        ['2D', '2C', '2H', '2S', '6D'],
+        ['4D', '4C', '4H', '3S', '3C'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('should beat lower 4 of a kind', () => {
+      const res = pokerJudge(
+        ['2D', '2C', '2H', '2S', '6D'],
+        ['AD', '3S', 'AS', 'AC', 'AH'],
+      );
+      expect(res).toEqual(2);
+    });
+  });
 });
