@@ -8,9 +8,8 @@ import {
   flush,
   fourOfKind,
   straightFlush,
-  UNKNOWN,
-  TIE,
 } from './hand-analyzers';
+import { UNKNOWN, TIE } from './poker-model';
 
 export function pokerJudge(hand1: string[], hand2: string[]): number {
   const h1 = parseCards(hand1);

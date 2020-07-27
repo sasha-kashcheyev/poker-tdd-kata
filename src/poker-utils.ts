@@ -1,58 +1,22 @@
 import {
+  UNCERTAIN,
+  UNKNOWN,
+  TIE,
   FIRST_WINS,
   SECOND_WINS,
-  TIE,
-  UNKNOWN,
-  UNCERTAIN,
-} from './hand-analyzers';
+  Card,
+  Suit,
+  Value,
+  NUMERIC_VALUES,
+  Repetition,
+  CombinationSearchResult,
+} from './poker-model';
 
-export type Suit = 'C' | 'D' | 'H' | 'S';
-export type Value =
-  | '2'
-  | '3'
-  | '4'
-  | '5'
-  | '6'
-  | '7'
-  | '8'
-  | '9'
-  | '10'
-  | 'J'
-  | 'Q'
-  | 'K'
-  | 'A';
-
-export const NUMERIC_VALUES = {
-  2: 2,
-  3: 3,
-  4: 4,
-  5: 5,
-  6: 6,
-  7: 7,
-  8: 8,
-  9: 9,
-  10: 10,
-  J: 11,
-  Q: 12,
-  K: 13,
-  A: 14,
-};
-
-export interface Card {
-  value: Value;
-  suit: Suit;
-}
-
-export interface Repetition {
-  value: Value;
-  count: number;
-}
-
-export interface CombinationSearchResult {
-  found: boolean;
-  highestValue?: Value;
-}
-
+/**
+ * Takes array of "raw" strings and parses each of them to Card objects
+ * @param hand An array of strings like 'AC', '10D' or '9H'
+ * @returns An array of Card objects
+ */
 export function parseCards(hand: string[]): Card[] {
   const res: Card[] = [];
 
@@ -68,11 +32,18 @@ export function parseCards(hand: string[]): Card[] {
     res.push(newCard);
   }
 
-  const sorted = res.sort(compareCardValue);
-
-  return sorted;
+  return res;
 }
 
+/**
+ * Compares two cards by their value.
+ * Returns positive number if first card is bigger,
+ * negative number if second card is bigger, and
+ * zero if card values are equal.
+ * @param a first card
+ * @param b second card
+ * @returns comparation result
+ */
 export function compareCardValue(a: Card, b: Card): number {
   if (a === undefined || b === undefined) {
     return 0;
@@ -81,6 +52,14 @@ export function compareCardValue(a: Card, b: Card): number {
   return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
 }
 
+/**
+ * Finds how many cards of same value there are in the hand
+ * @param hand parsed hand to find repetitions
+ * @param count if given, the function will only return repetitions of exactly
+ * this card count. E.g. if count is set to 2 and the hand contains full house,
+ * only one entry will return.
+ * @returns array of Repetition objects (containing value and amount)
+ */
 export function extractRepetitions(
   hand: Card[],
   count: number = 0,
@@ -105,11 +84,27 @@ export function extractRepetitions(
   return filtered;
 }
 
+/**
+ * Compares two Repetition object by their values
+ * @param a first repetition
+ * @param b second repetition
+ */
 export function compareRepetitionByValue(a: Repetition, b: Repetition) {
   return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
 }
 
-export function findAdvantage(
+/**
+ * Calculates if one of the hands has specific repetition(s) while other
+ * doesn't.
+ * @param r1 first repetition array
+ * @param r2 second repetition array
+ * @param expectedCount number of repetitions that matters
+ * @returns UNKNOWN if no one has the repetition, FIRST_WINS if the first hand
+ * has the repetition, SECOND_WINS if the second hand has it, and UNCERTAIN if
+ * both hands have the repetitions. In the case of UNCERTAIN, other rules must
+ * apply to find out the winner.
+ */
+export function findRepetitionAdvantage(
   r1: Repetition[],
   r2: Repetition[],
   expectedCount: number = 1,
@@ -127,6 +122,13 @@ export function findAdvantage(
   return UNCERTAIN;
 }
 
+/**
+ * Compares two arrays of Repetition objects to find which of them has higher
+ * repeating cards.
+ * @param r1 first repetition
+ * @param r2 second repetition
+ * @returns FIRST_WINS, SECOND_WINS or UNKNOWN if the repetitions are equal.
+ */
 export function findHigherValueRepetition(
   r1: Repetition[],
   r2: Repetition[],
@@ -156,6 +158,13 @@ export function findHigherValueRepetition(
   return UNKNOWN;
 }
 
+/**
+ * Looks for consecutive cards in given hand.
+ * @param hand array of Card objects
+ * @returns CombinationSearchResult. Its `found` will be true if all the
+ * cards are consecutive, and the `highestValue` will equal the highest of them.
+ * Otherwise, highestValue will be undefined.
+ */
 export function findStraight(hand: Card[]): CombinationSearchResult {
   const res: CombinationSearchResult = {
     found: true,
@@ -178,6 +187,11 @@ export function findStraight(hand: Card[]): CombinationSearchResult {
   return res;
 }
 
+/**
+ * Checks if all the cards in hand have the same suit.
+ * @param hand
+ * @returns a CombinationSearchResult.
+ */
 export function findFlush(hand: Card[]): CombinationSearchResult {
   const suit = hand[0].suit;
   if (hand.some((v) => v.suit !== suit)) {
@@ -192,6 +206,15 @@ export function findFlush(hand: Card[]): CombinationSearchResult {
   };
 }
 
+/**
+ * Compares two CombinationSearchResult objects to find if one of them wins.
+ * @param c1 first combination search result
+ * @param c2 second combination search result
+ * @returns UNKNOWN if the combination wasn't found in any of the two hands,
+ * FIRST_WINS/SECOND_WINS if only one of hands has the combination.
+ * If both hands have the combination, it returns FIRST_WINS, SECOND_WINS or
+ * TIE, depending on high card of each hand.
+ */
 export function compareSameTypeCombinations(
   c1: CombinationSearchResult,
   c2: CombinationSearchResult,
