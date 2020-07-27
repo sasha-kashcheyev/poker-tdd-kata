@@ -196,7 +196,6 @@ export function compareSameTypeCombinations(
   c1: CombinationSearchResult,
   c2: CombinationSearchResult,
 ) {
-  console.log(c1, c2);
   if (!c1.found && !c2.found) {
     return UNKNOWN;
   } else if (c1.found && !c2.found) {

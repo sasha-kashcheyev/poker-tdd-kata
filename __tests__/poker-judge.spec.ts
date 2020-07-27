@@ -221,5 +221,37 @@ describe('pokerJudge', () => {
       );
       expect(res).toEqual(2);
     });
+
+    it('should beat regular straight', () => {
+      const res = pokerJudge(
+        ['JD', '10S', 'QS', 'KC', 'AH'],
+        ['2C', '3C', '4C', '5C', '6C'],
+      );
+      expect(res).toEqual(2);
+    });
+
+    it('should beat regular flush', () => {
+      const res = pokerJudge(
+        ['2C', '3C', '4C', '5C', '6C'],
+        ['JD', '8D', 'QD', '5D', 'AD'],
+      );
+      expect(res).toEqual(1);
+    });
+
+    it('should beat a straight flush with lower high card', () => {
+      const res = pokerJudge(
+        ['2C', '3C', '4C', '5C', '6C'],
+        ['3D', '4D', '5D', '6D', '7D'],
+      );
+      expect(res).toEqual(2);
+    });
+
+    it('should tie with a straight flush with the same high card', () => {
+      const res = pokerJudge(
+        ['3D', '4D', '5D', '6D', '7D'],
+        ['3S', '4S', '5S', '6S', '7S'],
+      );
+      expect(res).toEqual(0);
+    });
   });
 });
