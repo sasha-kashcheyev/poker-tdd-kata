@@ -1,5 +1,4 @@
 <h1 align="center">
-<img width="241" src ="kata.jpg" />
 <br>
 Poker Tdd Kata
 </h1>
@@ -17,8 +16,8 @@ npm run start
 
 #### Start wallaby (recommended)
 
-  we recommend using wallaby. 
-  - Wallaby is already pre-configured inside our generated project, all you have to do is start it. 
+  we recommend using wallaby.
+  - Wallaby is already pre-configured inside our generated project, all you have to do is start it.
   - If you use VSCode wallaby will auto start (Thanks to Gabriel Grinberg!)
   - http://wallabyjs.com/app is really cool!
 
@@ -56,7 +55,7 @@ pokerJudge(hand1, hand2);
 
 - This function returns an integer: 0 for tie, 1 if hand1 won, 2 if hand2 won
 
-For example: 
+For example:
 
 ```js
 // hand 2 wins. See rules below for more details
@@ -85,7 +84,7 @@ Example:
 
 ```js
 //hand2 wins - high card
-pokerJudge(['2H', '3D', '5S', '9C', 'KD'], ['2C', '3H', '4S', '8C', 'AH']) === 2; 
+pokerJudge(['2H', '3D', '5S', '9C', 'KD'], ['2C', '3H', '4S', '8C', 'AH']) === 2;
 ```
 
 ### Step 2: *Pair*
