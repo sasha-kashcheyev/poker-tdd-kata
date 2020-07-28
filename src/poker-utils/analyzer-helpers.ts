@@ -6,7 +6,8 @@ import {
   NUMERIC_VALUES,
   Repetition,
   CombinationSearchResult,
-} from './poker-judge/poker-model';
+} from '../poker-judge/poker-model';
+import { compareByValue } from './util';
 
 export function compareCombinations({
   hand1,
@@ -47,46 +48,6 @@ export function compareRepetitions({
 }
 
 /**
- * Takes array of "raw" strings and parses each of them to Card objects
- * @param hand An array of strings like 'AC', '10D' or '9H'
- * @returns An array of Card objects
- */
-export function parseCards(hand: string[]): Card[] {
-  const res: Card[] = [];
-
-  for (const rawCard of hand) {
-    const suit = rawCard.charAt(rawCard.length - 1);
-    const value = rawCard.substring(0, rawCard.length - 1);
-
-    const newCard: Card = {
-      suit: suit as Suit,
-      value: ('' + value) as Value,
-    };
-
-    res.push(newCard);
-  }
-
-  return res;
-}
-
-/**
- * Compares two cards by their value.
- * Returns positive number if first card is bigger,
- * negative number if second card is bigger, and
- * zero if card values are equal.
- * @param a first card
- * @param b second card
- * @returns comparation result
- */
-export function compareCardValue(a: Card, b: Card): number {
-  if (a === undefined || b === undefined) {
-    return 0;
-  }
-
-  return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
-}
-
-/**
  * Finds how many cards of same value there are in the hand
  * @param hand parsed hand to find repetitions
  * @param count if given, the function will only return repetitions of exactly
@@ -119,15 +80,6 @@ export function extractRepetitions({
 
   const filtered = Array.from(res.values()).filter(filter);
   return filtered;
-}
-
-/**
- * Compares two Repetition object by their values
- * @param a first repetition
- * @param b second repetition
- */
-export function compareRepetitionByValue(a: Repetition, b: Repetition) {
-  return NUMERIC_VALUES[a.value] - NUMERIC_VALUES[b.value];
 }
 
 /**
@@ -181,8 +133,8 @@ export function findHigherValueRepetition(
     throw new Error('Different amount of repetitions');
   }
 
-  const sort1 = r1.sort(compareRepetitionByValue).reverse();
-  const sort2 = r2.sort(compareRepetitionByValue).reverse();
+  const sort1 = r1.sort(compareByValue).reverse();
+  const sort2 = r2.sort(compareByValue).reverse();
 
   for (let i = 0; i < sort1.length; i++) {
     const nv1 = NUMERIC_VALUES[sort1[i].value];
@@ -197,66 +149,6 @@ export function findHigherValueRepetition(
   }
 
   return GameResult.UNKNOWN;
-}
-
-/**
- * Looks for consecutive cards in given hand.
- * @param hand array of Card objects
- * @returns CombinationSearchResult. Its `found` will be true if all the
- * cards are consecutive, and the `highestValue` will equal the highest of them.
- * Otherwise, highestValue will be undefined.
- */
-export function findStraight(hand: Card[]): CombinationSearchResult {
-  const res: CombinationSearchResult = {
-    found: true,
-  };
-  const sorted = hand.sort(compareCardValue);
-
-  sorted.forEach((c, i, arr) => {
-    if (i > 0) {
-      const prevNv = NUMERIC_VALUES[arr[i - 1].value];
-      const thisNv = NUMERIC_VALUES[c.value];
-      res.found = res.found && thisNv === prevNv + 1;
-    }
-  });
-
-  if (res.found) {
-    res.highestValue = sorted[sorted.length - 1].value;
-    console.log('highest value', res.highestValue);
-  }
-
-  return res;
-}
-
-/**
- * Checks if all the cards in hand have the same suit.
- * @param hand
- * @returns a CombinationSearchResult.
- */
-export function findFlush(hand: Card[]): CombinationSearchResult {
-  const suit = hand[0].suit;
-  if (hand.some((v) => v.suit !== suit)) {
-    return {
-      found: false,
-    };
-  }
-
-  const highestValue = hand.sort(compareCardValue).reverse()[0].value;
-
-  return {
-    found: true,
-    highestValue,
-  };
-}
-
-export function findStraightFlush(hand: Card[]): CombinationSearchResult {
-  const { found: foundStraight, highestValue } = findStraight(hand);
-  const { found: foundFlush } = findFlush(hand);
-
-  return {
-    found: foundStraight && foundFlush,
-    highestValue,
-  };
 }
 
 /**

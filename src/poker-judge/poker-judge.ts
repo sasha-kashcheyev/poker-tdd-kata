@@ -1,4 +1,4 @@
-import { parseCards } from '../poker-utils';
+import { parseCards } from '../poker-utils/util';
 import {
   highCard,
   pair,
@@ -8,7 +8,7 @@ import {
   flush,
   fourOfKind,
   straightFlush,
-} from '../hand-analyzers';
+} from '../poker-utils/hand-analyzers';
 import { GameResult } from './poker-model';
 
 export function pokerJudge(hand1: string[], hand2: string[]): number {
