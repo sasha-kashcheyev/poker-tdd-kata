@@ -1,4 +1,4 @@
-import { parseCards } from './poker-utils';
+import { parseCards } from '../poker-utils';
 import {
   highCard,
   pair,
@@ -8,8 +8,8 @@ import {
   flush,
   fourOfKind,
   straightFlush,
-} from './hand-analyzers';
-import { UNKNOWN, TIE } from './poker-model';
+} from '../hand-analyzers';
+import { GameResult } from './poker-model';
 
 export function pokerJudge(hand1: string[], hand2: string[]): number {
   const h1 = parseCards(hand1);
@@ -28,12 +28,12 @@ export function pokerJudge(hand1: string[], hand2: string[]): number {
 
   for (const analyzer of analyzers) {
     const res = analyzer(h1, h2);
-    if (res !== UNKNOWN) {
+    if (res !== GameResult.UNKNOWN) {
       return res;
     }
   }
 
-  return TIE;
+  return GameResult.TIE;
 }
 
 export default pokerJudge;

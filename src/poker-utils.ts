@@ -1,16 +1,12 @@
 import {
-  UNCERTAIN,
-  UNKNOWN,
-  TIE,
-  FIRST_WINS,
-  SECOND_WINS,
+  GameResult,
   Card,
   Suit,
   Value,
   NUMERIC_VALUES,
   Repetition,
   CombinationSearchResult,
-} from './poker-model';
+} from './poker-judge/poker-model';
 
 /**
  * Takes array of "raw" strings and parses each of them to Card objects
@@ -110,16 +106,16 @@ export function findRepetitionAdvantage(
   expectedCount: number = 1,
 ): number {
   if (r1.length < expectedCount && r2.length < expectedCount) {
-    return UNKNOWN;
+    return GameResult.UNKNOWN;
   }
   if (r1.length === expectedCount && r2.length < expectedCount) {
-    return FIRST_WINS;
+    return GameResult.FIRST_WINS;
   }
   if (r1.length < expectedCount && r2.length === expectedCount) {
-    return SECOND_WINS;
+    return GameResult.SECOND_WINS;
   }
 
-  return UNCERTAIN;
+  return GameResult.UNCERTAIN;
 }
 
 /**
@@ -148,14 +144,14 @@ export function findHigherValueRepetition(
     const nv2 = NUMERIC_VALUES[sort2[i].value];
 
     if (nv1 > nv2) {
-      return FIRST_WINS;
+      return GameResult.FIRST_WINS;
     }
     if (nv2 > nv1) {
-      return SECOND_WINS;
+      return GameResult.SECOND_WINS;
     }
   }
 
-  return UNKNOWN;
+  return GameResult.UNKNOWN;
 }
 
 /**
@@ -220,11 +216,11 @@ export function compareSameTypeCombinations(
   c2: CombinationSearchResult,
 ) {
   if (!c1.found && !c2.found) {
-    return UNKNOWN;
+    return GameResult.UNKNOWN;
   } else if (c1.found && !c2.found) {
-    return FIRST_WINS;
+    return GameResult.FIRST_WINS;
   } else if (!c1.found && c2.found) {
-    return SECOND_WINS;
+    return GameResult.SECOND_WINS;
   }
 
   // at this point, both players have straight on hand
@@ -238,10 +234,10 @@ export function compareSameTypeCombinations(
   const nv2 = NUMERIC_VALUES[c2.highestValue];
 
   if (nv1 > nv2) {
-    return FIRST_WINS;
+    return GameResult.FIRST_WINS;
   } else if (nv1 < nv2) {
-    return SECOND_WINS;
+    return GameResult.SECOND_WINS;
   } else {
-    return TIE;
+    return GameResult.TIE;
   }
 }

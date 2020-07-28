@@ -1,3 +1,3 @@
-import pokerJudge from './poker-judge';
+import pokerJudge from './poker-judge/poker-judge';
 
 export default pokerJudge;

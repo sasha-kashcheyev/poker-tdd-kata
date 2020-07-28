@@ -1,11 +1,4 @@
-import {
-  UNCERTAIN,
-  UNKNOWN,
-  TIE,
-  FIRST_WINS,
-  SECOND_WINS,
-  Card,
-} from './poker-model';
+import { GameResult, Card } from './poker-judge/poker-model';
 
 import {
   extractRepetitions,
@@ -32,14 +25,14 @@ export function highCard(h1: Card[], h2: Card[]): number {
   for (let i = 0; i < s1.length; i++) {
     const compared = compareCardValue(s1[i], s2[i]);
     if (compared > 0) {
-      return FIRST_WINS;
+      return GameResult.FIRST_WINS;
     }
     if (compared < 0) {
-      return SECOND_WINS;
+      return GameResult.SECOND_WINS;
     }
   }
 
-  return TIE;
+  return GameResult.TIE;
 }
 
 /// ///////////////////////////
@@ -52,7 +45,7 @@ export function pair(h1: Card[], h2: Card[]): number {
 
   const adv = findRepetitionAdvantage(r1, r2);
 
-  if (adv === UNCERTAIN) {
+  if (adv === GameResult.UNCERTAIN) {
     return findHigherValueRepetition(r1, r2);
   }
 
@@ -69,7 +62,7 @@ export function twoPairs(h1: Card[], h2: Card[]): number {
 
   const adv = findRepetitionAdvantage(r1, r2, 2);
 
-  if (adv === UNCERTAIN) {
+  if (adv === GameResult.UNCERTAIN) {
     return findHigherValueRepetition(r1, r2);
   }
 
@@ -86,7 +79,7 @@ export function threeOfKind(h1: Card[], h2: Card[]): number {
 
   const adv = findRepetitionAdvantage(r1, r2);
 
-  if (adv === UNCERTAIN) {
+  if (adv === GameResult.UNCERTAIN) {
     return findHigherValueRepetition(r1, r2);
   }
 
@@ -126,7 +119,7 @@ export function fullHouse(h1: Card[], h2: Card[]): number {
   const r2by2 = extractRepetitions(h2, 2); // 2 repeating cards from second hand
 
   if (!r1by3.length || !r2by3.length || !r1by2.length || !r2by2.length) {
-    return UNKNOWN;
+    return GameResult.UNKNOWN;
   }
 
   return findHigherValueRepetition(r1by3, r2by3);
@@ -142,7 +135,7 @@ export function fourOfKind(h1: Card[], h2: Card[]): number {
 
   const adv = findRepetitionAdvantage(r1, r2);
 
-  if (adv === UNCERTAIN) {
+  if (adv === GameResult.UNCERTAIN) {
     return findHigherValueRepetition(r1, r2);
   }
 
@@ -164,18 +157,18 @@ export function straightFlush(h1: Card[], h2: Card[]): number {
 
   // no one has straight flush
   if (!hasStraightFlush1 && !hasStraightFlush2) {
-    return UNKNOWN;
+    return GameResult.UNKNOWN;
   }
 
   // first hand has straight flush, second doesn't
   if (hasStraightFlush1 && !hasStraightFlush2) {
-    return FIRST_WINS;
+    return GameResult.FIRST_WINS;
   }
 
   // second hand has SF and the first doesn't
   if (!hasStraightFlush1 && hasStraightFlush2) {
-    return SECOND_WINS;
+    return GameResult.SECOND_WINS;
   }
 
-  return UNKNOWN;
+  return GameResult.UNKNOWN;
 }

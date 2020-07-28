@@ -1,9 +1,17 @@
 // POSSIBLE GAME RESULTS
-export const UNCERTAIN = -2; // The result is yet unkown, but will be calculated in this analyzer.
-export const UNKNOWN = -1; // The result is yet unknown, but will be calculated in one of the later analyzers
-export const TIE = 0; // The result is tie
-export const FIRST_WINS = 1; // First hand wins
-export const SECOND_WINS = 2; // Second hand wins
+export enum GameResult {
+  // The result is yet unkown, but will be calculated in this analyzer.
+  UNCERTAIN = -2,
+
+  // The result is yet unknown, but will be calculated in one of the later analyzers
+  UNKNOWN = -1,
+
+  TIE = 0,
+
+  FIRST_WINS = 1,
+
+  SECOND_WINS = 2,
+}
 
 export type Suit = 'C' | 'D' | 'H' | 'S';
 export type Value =
