@@ -8,6 +8,26 @@ import {
   CombinationSearchResult,
 } from './poker-judge/poker-model';
 
+export function compareCombinations({ hand1, hand2, searchFunction }) {
+  const c1 = searchFunction(hand1);
+  const c2 = searchFunction(hand2);
+
+  return compareSameTypeCombinations(c1, c2);
+}
+
+export function compareRepetitions({ hand1, hand2, repSize, repCount = 1 }) {
+  const r1 = extractRepetitions(hand1, repSize);
+  const r2 = extractRepetitions(hand2, repSize);
+
+  const adv = findRepetitionAdvantage(r1, r2, repCount);
+
+  if (adv === GameResult.UNCERTAIN) {
+    return findHigherValueRepetition(r1, r2);
+  }
+
+  return adv;
+}
+
 /**
  * Takes array of "raw" strings and parses each of them to Card objects
  * @param hand An array of strings like 'AC', '10D' or '9H'
@@ -199,6 +219,16 @@ export function findFlush(hand: Card[]): CombinationSearchResult {
   return {
     found: true,
     highestValue: hand.sort(compareCardValue).reverse()[0].value,
+  };
+}
+
+export function findStraightFlush(hand: Card[]): CombinationSearchResult {
+  const { found: foundStraight, highestValue } = findStraight(hand);
+  const { found: foundFlush } = findFlush(hand);
+
+  return {
+    found: foundStraight && foundFlush,
+    highestValue,
   };
 }
 

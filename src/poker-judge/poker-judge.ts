@@ -27,7 +27,10 @@ export function pokerJudge(hand1: string[], hand2: string[]): number {
   ];
 
   for (const analyzer of analyzers) {
-    const res = analyzer(h1, h2);
+    const res = analyzer({
+      hand1: h1,
+      hand2: h2,
+    });
     if (res !== GameResult.UNKNOWN) {
       return res;
     }
