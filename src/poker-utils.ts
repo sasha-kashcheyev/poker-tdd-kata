@@ -8,21 +8,39 @@ import {
   CombinationSearchResult,
 } from './poker-judge/poker-model';
 
-export function compareCombinations({ hand1, hand2, searchFunction }) {
-  const c1 = searchFunction(hand1);
-  const c2 = searchFunction(hand2);
+export function compareCombinations({
+  hand1,
+  hand2,
+  searchFunction,
+}: {
+  hand1: Card[];
+  hand2: Card[];
+  searchFunction: (hand: Card[]) => CombinationSearchResult;
+}) {
+  const combination1 = searchFunction(hand1);
+  const combination2 = searchFunction(hand2);
 
-  return compareSameTypeCombinations(c1, c2);
+  return compareSameTypeCombinations(combination1, combination2);
 }
 
-export function compareRepetitions({ hand1, hand2, repSize, repCount = 1 }) {
-  const r1 = extractRepetitions(hand1, repSize);
-  const r2 = extractRepetitions(hand2, repSize);
+export function compareRepetitions({
+  hand1,
+  hand2,
+  repSize,
+  repCount = 1,
+}: {
+  hand1: Card[];
+  hand2: Card[];
+  repSize: number;
+  repCount?: number;
+}) {
+  const repetition1 = extractRepetitions({ hand: hand1, repSize });
+  const repetition2 = extractRepetitions({ hand: hand2, repSize });
 
-  const adv = findRepetitionAdvantage(r1, r2, repCount);
+  const adv = findRepetitionAdvantage({ repetition1, repetition2, repCount });
 
   if (adv === GameResult.UNCERTAIN) {
-    return findHigherValueRepetition(r1, r2);
+    return findHigherValueRepetition(repetition1, repetition2);
   }
 
   return adv;
@@ -76,10 +94,13 @@ export function compareCardValue(a: Card, b: Card): number {
  * only one entry will return.
  * @returns array of Repetition objects (containing value and amount)
  */
-export function extractRepetitions(
-  hand: Card[],
-  count: number = 0,
-): Repetition[] {
+export function extractRepetitions({
+  hand,
+  repSize = 0,
+}: {
+  hand: Card[];
+  repSize: number;
+}): Repetition[] {
   const res: Map<Value, Repetition> = new Map();
 
   for (const c of hand) {
@@ -94,7 +115,7 @@ export function extractRepetitions(
   }
 
   const filter: (r: Repetition) => Boolean =
-    count === 0 ? (r) => r.count > 1 : (r) => r.count === count;
+    repSize === 0 ? (r) => r.count > 1 : (r) => r.count === repSize;
 
   const filtered = Array.from(res.values()).filter(filter);
   return filtered;
@@ -112,26 +133,30 @@ export function compareRepetitionByValue(a: Repetition, b: Repetition) {
 /**
  * Calculates if one of the hands has specific repetition(s) while other
  * doesn't.
- * @param r1 first repetition array
- * @param r2 second repetition array
- * @param expectedCount number of repetitions that matters
+ * @param repetition1 first repetition array
+ * @param repetition2 second repetition array
+ * @param repCount number of repetitions that matters
  * @returns UNKNOWN if no one has the repetition, FIRST_WINS if the first hand
  * has the repetition, SECOND_WINS if the second hand has it, and UNCERTAIN if
  * both hands have the repetitions. In the case of UNCERTAIN, other rules must
  * apply to find out the winner.
  */
-export function findRepetitionAdvantage(
-  r1: Repetition[],
-  r2: Repetition[],
-  expectedCount: number = 1,
-): number {
-  if (r1.length < expectedCount && r2.length < expectedCount) {
+export function findRepetitionAdvantage({
+  repetition1,
+  repetition2,
+  repCount = 1,
+}: {
+  repetition1: Repetition[];
+  repetition2: Repetition[];
+  repCount: number;
+}): GameResult {
+  if (repetition1.length < repCount && repetition2.length < repCount) {
     return GameResult.UNKNOWN;
   }
-  if (r1.length === expectedCount && r2.length < expectedCount) {
+  if (repetition1.length === repCount && repetition2.length < repCount) {
     return GameResult.FIRST_WINS;
   }
-  if (r1.length < expectedCount && r2.length === expectedCount) {
+  if (repetition1.length < repCount && repetition2.length === repCount) {
     return GameResult.SECOND_WINS;
   }
 
@@ -148,7 +173,7 @@ export function findRepetitionAdvantage(
 export function findHigherValueRepetition(
   r1: Repetition[],
   r2: Repetition[],
-): number {
+): GameResult {
   if (!r1 || !r2 || !r1.length || !r2.length) {
     throw new Error('No repetitions');
   }
@@ -216,9 +241,11 @@ export function findFlush(hand: Card[]): CombinationSearchResult {
     };
   }
 
+  const highestValue = hand.sort(compareCardValue).reverse()[0].value;
+
   return {
     found: true,
-    highestValue: hand.sort(compareCardValue).reverse()[0].value,
+    highestValue,
   };
 }
 
@@ -234,34 +261,34 @@ export function findStraightFlush(hand: Card[]): CombinationSearchResult {
 
 /**
  * Compares two CombinationSearchResult objects to find if one of them wins.
- * @param c1 first combination search result
- * @param c2 second combination search result
+ * @param combination1 first combination search result
+ * @param combination2 second combination search result
  * @returns UNKNOWN if the combination wasn't found in any of the two hands,
  * FIRST_WINS/SECOND_WINS if only one of hands has the combination.
  * If both hands have the combination, it returns FIRST_WINS, SECOND_WINS or
  * TIE, depending on high card of each hand.
  */
 export function compareSameTypeCombinations(
-  c1: CombinationSearchResult,
-  c2: CombinationSearchResult,
-) {
-  if (!c1.found && !c2.found) {
+  combination1: CombinationSearchResult,
+  combination2: CombinationSearchResult,
+): GameResult {
+  if (!combination1.found && !combination2.found) {
     return GameResult.UNKNOWN;
-  } else if (c1.found && !c2.found) {
+  } else if (combination1.found && !combination2.found) {
     return GameResult.FIRST_WINS;
-  } else if (!c1.found && c2.found) {
+  } else if (!combination1.found && combination2.found) {
     return GameResult.SECOND_WINS;
   }
 
   // at this point, both players have straight on hand
   // so, judging by the higher card
 
-  if (!c1.highestValue || !c2.highestValue) {
+  if (!combination1.highestValue || !combination2.highestValue) {
     throw new Error('Highest card is not set.');
   }
 
-  const nv1 = NUMERIC_VALUES[c1.highestValue];
-  const nv2 = NUMERIC_VALUES[c2.highestValue];
+  const nv1 = NUMERIC_VALUES[combination1.highestValue];
+  const nv2 = NUMERIC_VALUES[combination2.highestValue];
 
   if (nv1 > nv2) {
     return GameResult.FIRST_WINS;

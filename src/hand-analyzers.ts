@@ -54,10 +54,10 @@ export function flush({ hand1, hand2 }): GameResult {
 }
 
 export function fullHouse({ hand1, hand2 }): GameResult {
-  const r1by3 = extractRepetitions(hand1, 3); // 3 repeating cards from first hand
-  const r2by3 = extractRepetitions(hand2, 3); // 3 repeating cards from second hand
-  const r1by2 = extractRepetitions(hand1, 2); // 2 repeating cards from first hand
-  const r2by2 = extractRepetitions(hand2, 2); // 2 repeating cards from second hand
+  const r1by3 = extractRepetitions({ hand: hand1, repSize: 3 }); // 3 repeating cards from first hand
+  const r2by3 = extractRepetitions({ hand: hand2, repSize: 3 }); // 3 repeating cards from second hand
+  const r1by2 = extractRepetitions({ hand: hand1, repSize: 2 }); // 2 repeating cards from first hand
+  const r2by2 = extractRepetitions({ hand: hand2, repSize: 2 }); // 2 repeating cards from second hand
 
   if (!r1by3.length || !r2by3.length || !r1by2.length || !r2by2.length) {
     return GameResult.UNKNOWN;
