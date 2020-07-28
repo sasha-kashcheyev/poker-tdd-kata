@@ -6,7 +6,6 @@ import {
   findHigherValueRepetition,
   findStraight,
   findFlush,
-  compareSameTypeCombinations,
   compareCardValue,
   compareRepetitions,
   compareCombinations,

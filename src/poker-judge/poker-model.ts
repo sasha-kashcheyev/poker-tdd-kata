@@ -13,7 +13,13 @@ export enum GameResult {
   SECOND_WINS = 2,
 }
 
-export type Suit = 'C' | 'D' | 'H' | 'S';
+export enum Suit {
+  C = 'C',
+  D = 'D',
+  H = 'H',
+  S = 'S',
+}
+
 export type Value =
   | '2'
   | '3'
